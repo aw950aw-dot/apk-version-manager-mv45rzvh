@@ -23,7 +23,6 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends Activity implements ApkAdapter.OnSelectionChangedListener {
@@ -48,6 +47,7 @@ public class MainActivity extends Activity implements ApkAdapter.OnSelectionChan
 
     private Button btnScanAll;
     private Button btnScanFolder;
+    private Button btnScanSdCard;
     private Button btnSelectOld;
 
     private ApkAdapter adapter;
@@ -86,6 +86,7 @@ public class MainActivity extends Activity implements ApkAdapter.OnSelectionChan
 
         btnScanAll = findViewById(R.id.btnScanAll);
         btnScanFolder = findViewById(R.id.btnScanFolder);
+        btnScanSdCard = findViewById(R.id.btnScanSdCard);
         btnSelectOld = findViewById(R.id.btnSelectOld);
 
         adapter = new ApkAdapter(this, this);
@@ -112,6 +113,20 @@ public class MainActivity extends Activity implements ApkAdapter.OnSelectionChan
                             startScan(folder);
                         }
                     }).show();
+                }
+            }
+        });
+
+        btnScanSdCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (checkAndRequestPermissions()) {
+                    StorageUtils.StorageVolume sdCard = StorageUtils.getFirstSdCard(MainActivity.this);
+                    if (sdCard != null) {
+                        startScan(sdCard.getRootPath());
+                    } else {
+                        Toast.makeText(MainActivity.this, R.string.sd_card_not_found, Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -202,7 +217,8 @@ public class MainActivity extends Activity implements ApkAdapter.OnSelectionChan
         if (targetFolder != null) {
             dirsToScan.add(targetFolder);
         } else {
-            dirsToScan.add(Environment.getExternalStorageDirectory());
+            // Automatically scan both Internal Storage AND all mounted SD Cards
+            dirsToScan.addAll(StorageUtils.getAllStorageRoots(this));
         }
 
         ApkScanner.scanDirectories(this, dirsToScan, new ApkScanner.ScanCallback() {
@@ -319,6 +335,7 @@ public class MainActivity extends Activity implements ApkAdapter.OnSelectionChan
         final List<ApkItem> selected = adapter.getSelectedItems();
         if (selected.isEmpty()) return;
 
+        // Opens the folder picker allowing selection of Internal Storage or SD Card
         new FolderPickerDialog(this, new FolderPickerDialog.OnFolderSelectedListener() {
             @Override
             public void onFolderSelected(File destinationFolder) {

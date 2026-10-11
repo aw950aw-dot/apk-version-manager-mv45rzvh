@@ -16,6 +16,11 @@ public class FileUtils {
         if (src == null || !src.exists()) return false;
         if (src.getAbsolutePath().equals(dst.getAbsolutePath())) return true;
 
+        File parentDir = dst.getParentFile();
+        if (parentDir != null && !parentDir.exists()) {
+            parentDir.mkdirs();
+        }
+
         InputStream in = null;
         OutputStream out = null;
         try {
@@ -39,9 +44,14 @@ public class FileUtils {
     }
 
     public static boolean moveFile(File src, File dst) {
+        if (src == null || !src.exists()) return false;
+        if (src.getAbsolutePath().equals(dst.getAbsolutePath())) return true;
+
+        // Try direct filesystem rename first (instant if same volume)
         if (src.renameTo(dst)) {
             return true;
         }
+        // Fallback for cross-device moves (e.g. Internal Storage <-> SD Card)
         if (copyFile(src, dst)) {
             return src.delete();
         }
