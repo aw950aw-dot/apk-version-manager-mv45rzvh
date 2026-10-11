@@ -1,7 +1,6 @@
 package com.generated.app;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,19 +40,39 @@ public class ApkAdapter extends BaseAdapter {
 
     private Context context;
     private LayoutInflater inflater;
+    private List<ApkGroup> allGroups;
     private List<DisplayItem> displayItems;
     private OnSelectionChangedListener selectionListener;
+    private boolean duplicatesOnlyFilter = false;
 
     public ApkAdapter(Context context, OnSelectionChangedListener listener) {
         this.context = context;
         this.inflater = LayoutInflater.from(context);
+        this.allGroups = new ArrayList<>();
         this.displayItems = new ArrayList<>();
         this.selectionListener = listener;
     }
 
     public void updateData(List<ApkGroup> groups) {
+        this.allGroups = groups != null ? groups : new ArrayList<ApkGroup>();
+        applyFilter();
+    }
+
+    public void setDuplicatesOnlyFilter(boolean duplicatesOnly) {
+        this.duplicatesOnlyFilter = duplicatesOnly;
+        applyFilter();
+    }
+
+    public boolean isDuplicatesOnlyFilter() {
+        return duplicatesOnlyFilter;
+    }
+
+    private void applyFilter() {
         displayItems.clear();
-        for (ApkGroup group : groups) {
+        for (ApkGroup group : allGroups) {
+            if (duplicatesOnlyFilter && group.getItems().size() <= 1) {
+                continue;
+            }
             displayItems.add(new DisplayItem(group));
             for (ApkItem item : group.getItems()) {
                 displayItems.add(new DisplayItem(item));
@@ -130,6 +149,7 @@ public class ApkAdapter extends BaseAdapter {
                 holder.tvAppName = convertView.findViewById(R.id.tvGroupAppName);
                 holder.tvPackage = convertView.findViewById(R.id.tvGroupPackage);
                 holder.tvCount = convertView.findViewById(R.id.tvGroupCount);
+                holder.tvInstalledStatus = convertView.findViewById(R.id.tvGroupInstalledStatus);
                 convertView.setTag(holder);
             } else {
                 holder = (HeaderViewHolder) convertView.getTag();
@@ -146,6 +166,14 @@ public class ApkAdapter extends BaseAdapter {
             holder.tvPackage.setText(group.getPackageName());
             holder.tvCount.setText(group.getItems().size() + " גרסאות");
 
+            if (group.isInstalled()) {
+                holder.tvInstalledStatus.setText(context.getString(R.string.status_installed, group.getInstalledVersionName()));
+                holder.tvInstalledStatus.setTextColor(context.getResources().getColor(R.color.badge_installed_text));
+            } else {
+                holder.tvInstalledStatus.setText(context.getString(R.string.status_not_installed));
+                holder.tvInstalledStatus.setTextColor(context.getResources().getColor(R.color.text_secondary));
+            }
+
             return convertView;
         } else {
             ApkViewHolder holder;
@@ -155,6 +183,7 @@ public class ApkAdapter extends BaseAdapter {
                 holder.cbSelect = convertView.findViewById(R.id.cbSelect);
                 holder.tvVersion = convertView.findViewById(R.id.tvVersion);
                 holder.tvBadge = convertView.findViewById(R.id.tvBadge);
+                holder.tvInstallStatus = convertView.findViewById(R.id.tvInstallStatus);
                 holder.tvMeta = convertView.findViewById(R.id.tvMeta);
                 holder.tvPath = convertView.findViewById(R.id.tvPath);
                 convertView.setTag(holder);
@@ -176,6 +205,26 @@ public class ApkAdapter extends BaseAdapter {
                 holder.tvBadge.setText(context.getString(R.string.old_badge));
                 holder.tvBadge.setBackgroundResource(R.drawable.bg_badge_old);
                 holder.tvBadge.setTextColor(context.getResources().getColor(R.color.badge_old_text));
+            }
+
+            if (apkItem.isInstalled()) {
+                holder.tvInstallStatus.setVisibility(View.VISIBLE);
+                int status = apkItem.getInstallComparisonStatus();
+                if (status == ApkItem.INSTALL_STATUS_NEWER) {
+                    holder.tvInstallStatus.setText(context.getString(R.string.status_newer_than_installed));
+                    holder.tvInstallStatus.setBackgroundResource(R.drawable.bg_badge_new);
+                    holder.tvInstallStatus.setTextColor(context.getResources().getColor(R.color.badge_new_text));
+                } else if (status == ApkItem.INSTALL_STATUS_OLDER) {
+                    holder.tvInstallStatus.setText(context.getString(R.string.status_older_than_installed));
+                    holder.tvInstallStatus.setBackgroundResource(R.drawable.bg_badge_old);
+                    holder.tvInstallStatus.setTextColor(context.getResources().getColor(R.color.badge_old_text));
+                } else {
+                    holder.tvInstallStatus.setText(context.getString(R.string.status_same_as_installed));
+                    holder.tvInstallStatus.setBackgroundResource(R.drawable.bg_badge_same);
+                    holder.tvInstallStatus.setTextColor(context.getResources().getColor(R.color.badge_same_text));
+                }
+            } else {
+                holder.tvInstallStatus.setVisibility(View.GONE);
             }
 
             holder.cbSelect.setOnCheckedChangeListener(null);
@@ -207,12 +256,14 @@ public class ApkAdapter extends BaseAdapter {
         TextView tvAppName;
         TextView tvPackage;
         TextView tvCount;
+        TextView tvInstalledStatus;
     }
 
     private static class ApkViewHolder {
         CheckBox cbSelect;
         TextView tvVersion;
         TextView tvBadge;
+        TextView tvInstallStatus;
         TextView tvMeta;
         TextView tvPath;
     }

@@ -36,6 +36,7 @@ public class MainActivity extends Activity implements ApkAdapter.OnSelectionChan
     private LinearLayout layoutScanning;
     private TextView tvScanProgress;
     private LinearLayout layoutEmpty;
+    private TextView tvEmptyMessage;
     private ListView listViewApks;
 
     private LinearLayout layoutBottomBar;
@@ -46,6 +47,7 @@ public class MainActivity extends Activity implements ApkAdapter.OnSelectionChan
     private Button btnDelete;
 
     private Button btnScanAll;
+    private Button btnFilterDuplicates;
     private Button btnScanFolder;
     private Button btnScanSdCard;
     private Button btnSelectOld;
@@ -75,6 +77,7 @@ public class MainActivity extends Activity implements ApkAdapter.OnSelectionChan
         layoutScanning = findViewById(R.id.layoutScanning);
         tvScanProgress = findViewById(R.id.tvScanProgress);
         layoutEmpty = findViewById(R.id.layoutEmpty);
+        tvEmptyMessage = findViewById(R.id.tvEmptyMessage);
         listViewApks = findViewById(R.id.listViewApks);
 
         layoutBottomBar = findViewById(R.id.layoutBottomBar);
@@ -85,6 +88,7 @@ public class MainActivity extends Activity implements ApkAdapter.OnSelectionChan
         btnDelete = findViewById(R.id.btnDelete);
 
         btnScanAll = findViewById(R.id.btnScanAll);
+        btnFilterDuplicates = findViewById(R.id.btnFilterDuplicates);
         btnScanFolder = findViewById(R.id.btnScanFolder);
         btnScanSdCard = findViewById(R.id.btnScanSdCard);
         btnSelectOld = findViewById(R.id.btnSelectOld);
@@ -100,6 +104,23 @@ public class MainActivity extends Activity implements ApkAdapter.OnSelectionChan
                 if (checkAndRequestPermissions()) {
                     startScan(null);
                 }
+            }
+        });
+
+        btnFilterDuplicates.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean active = !adapter.isDuplicatesOnlyFilter();
+                adapter.setDuplicatesOnlyFilter(active);
+                if (active) {
+                    btnFilterDuplicates.setText(R.string.show_all_apks);
+                    btnFilterDuplicates.setBackgroundResource(R.drawable.bg_button_primary);
+                } else {
+                    btnFilterDuplicates.setText(R.string.filter_duplicates_only);
+                    btnFilterDuplicates.setBackgroundResource(R.drawable.bg_button_secondary);
+                }
+                updateListViewVisibility();
+                onSelectionChanged();
             }
         });
 
@@ -217,7 +238,6 @@ public class MainActivity extends Activity implements ApkAdapter.OnSelectionChan
         if (targetFolder != null) {
             dirsToScan.add(targetFolder);
         } else {
-            // Automatically scan both Internal Storage AND all mounted SD Cards
             dirsToScan.addAll(StorageUtils.getAllStorageRoots(this));
         }
 
@@ -235,18 +255,26 @@ public class MainActivity extends Activity implements ApkAdapter.OnSelectionChan
 
                 adapter.updateData(groups);
 
-                if (allItems.isEmpty()) {
-                    layoutEmpty.setVisibility(View.VISIBLE);
-                    listViewApks.setVisibility(View.GONE);
-                } else {
-                    layoutEmpty.setVisibility(View.GONE);
-                    listViewApks.setVisibility(View.VISIBLE);
-                }
-
+                updateListViewVisibility();
                 updateStats();
                 onSelectionChanged();
             }
         });
+    }
+
+    private void updateListViewVisibility() {
+        if (allScanItems.isEmpty()) {
+            layoutEmpty.setVisibility(View.VISIBLE);
+            tvEmptyMessage.setText(R.string.no_apks_found);
+            listViewApks.setVisibility(View.GONE);
+        } else if (adapter.getCount() == 0) {
+            layoutEmpty.setVisibility(View.VISIBLE);
+            tvEmptyMessage.setText(R.string.no_duplicates_found);
+            listViewApks.setVisibility(View.GONE);
+        } else {
+            layoutEmpty.setVisibility(View.GONE);
+            listViewApks.setVisibility(View.VISIBLE);
+        }
     }
 
     private void updateStats() {
@@ -335,7 +363,6 @@ public class MainActivity extends Activity implements ApkAdapter.OnSelectionChan
         final List<ApkItem> selected = adapter.getSelectedItems();
         if (selected.isEmpty()) return;
 
-        // Opens the folder picker allowing selection of Internal Storage or SD Card
         new FolderPickerDialog(this, new FolderPickerDialog.OnFolderSelectedListener() {
             @Override
             public void onFolderSelected(File destinationFolder) {

@@ -11,6 +11,9 @@
     <color name="badge_new_text">#2E7D32</color>
     <color name="badge_old_bg">#FFEBEE</color>
     <color name="badge_old_text">#C62828</color>
+    <color name="badge_installed_text">#1565C0</color>
+    <color name="badge_same_bg">#E3F2FD</color>
+    <color name="badge_same_text">#1976D2</color>
     <color name="danger">#D32F2F</color>
     <color name="divider">#E0E0E0</color>
 </resources>

@@ -48,6 +48,7 @@ public class ApkScanner {
                     ApkGroup group = groupMap.get(pkg);
                     if (group == null) {
                         group = new ApkGroup(pkg, item.getAppName(), item.getIcon());
+                        group.setInstalledInfo(item.isInstalled(), item.getInstalledVersionName(), item.getInstalledVersionCode());
                         groupMap.put(pkg, group);
                     }
                     group.addItem(item);
@@ -146,7 +147,24 @@ public class ApkScanner {
                     versionCode = pkgInfo.versionCode;
                 }
 
-                return new ApkItem(
+                boolean isInstalled = false;
+                String installedVersionName = "";
+                long installedVersionCode = -1;
+
+                try {
+                    PackageInfo installedInfo = pm.getPackageInfo(pkgInfo.packageName, 0);
+                    if (installedInfo != null) {
+                        isInstalled = true;
+                        installedVersionName = installedInfo.versionName != null ? installedInfo.versionName : "";
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                            installedVersionCode = installedInfo.getLongVersionCode();
+                        } else {
+                            installedVersionCode = installedInfo.versionCode;
+                        }
+                    }
+                } catch (PackageManager.NameNotFoundException ignored) {}
+
+                ApkItem item = new ApkItem(
                         path,
                         file.getName(),
                         pkgInfo.packageName,
@@ -157,6 +175,8 @@ public class ApkScanner {
                         file.lastModified(),
                         icon
                 );
+                item.setInstalledInfo(isInstalled, installedVersionName, installedVersionCode);
+                return item;
             }
         } catch (Exception ignored) {}
 

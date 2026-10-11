@@ -52,10 +52,23 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/tvInstallStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:paddingStart="6dp"
+            android:paddingTop="2dp"
+            android:paddingEnd="6dp"
+            android:paddingBottom="2dp"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <TextView
             android:id="@+id/tvMeta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="4dp"
             android:textColor="@color/text_secondary"
             android:textSize="12sp" />
 

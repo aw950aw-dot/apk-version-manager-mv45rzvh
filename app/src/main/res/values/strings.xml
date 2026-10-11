@@ -5,6 +5,8 @@
     <string name="scan_folder">סרוק תיקייה</string>
     <string name="scan_sd_card">סרוק כרטיס זיכרון</string>
     <string name="select_old">בחר גרסאות ישנות</string>
+    <string name="filter_duplicates_only">כפולים בלבד</string>
+    <string name="show_all_apks">הצג הכל</string>
     <string name="select_all">בחר הכל</string>
     <string name="deselect_all">בחר ללא</string>
     <string name="copy_selected">העתק</string>
@@ -16,6 +18,7 @@
     <string name="latest_badge">גרסה חדשה</string>
     <string name="old_badge">גרסה ישנה</string>
     <string name="no_apks_found">לא נמצאו קבצי APK</string>
+    <string name="no_duplicates_found">לא נמצאו קבצי APK כפולים</string>
     <string name="scanning">סורק קבצים במכשיר, אנא המתן...</string>
     <string name="permission_title">נדרשת הרשאת גישה לקבצים</string>
     <string name="permission_msg">כדי לחפש, לנהל ולהעביר קבצי APK בזיכרון הפנימי ובכרטיס הזיכרון, האפליקציה זקוקה להרשאה לניהול קבצים.</string>
@@ -31,4 +34,9 @@
     <string name="cancel">ביטול</string>
     <string name="create">צור</string>
     <string name="confirm_delete_title">אישור מחיקה</string>
+    <string name="status_installed">מותקן במכשיר (v%1$s)</string>
+    <string name="status_not_installed">לא מותקן במכשיר</string>
+    <string name="status_newer_than_installed">חדשה יותר מהמותקן</string>
+    <string name="status_older_than_installed">ישנה יותר מהמותקן</string>
+    <string name="status_same_as_installed">זהה לגרסה המותקנת</string>
 </resources>
