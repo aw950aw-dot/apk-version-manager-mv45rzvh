@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">מנהל גרסאות APK</string>
+    <string name="scan_all">סרוק את כל המכשיר</string>
+    <string name="scan_folder">סרוק תיקייה מסוימת</string>
+    <string name="select_old">בחר גרסאות ישנות</string>
+    <string name="select_all">בחר הכל</string>
+    <string name="deselect_all">בחר ללא</string>
+    <string name="copy_selected">העתק</string>
+    <string name="move_selected">העבר</string>
+    <string name="delete_selected">מחק</string>
+    <string name="total_files">סה\"כ קבצים</string>
+    <string name="total_size">נפח כולל</string>
+    <string name="old_versions">גרסאות ישנות</string>
+    <string name="latest_badge">גרסה חדשה</string>
+    <string name="old_badge">גרסה ישנה</string>
+    <string name="no_apks_found">לא נמצאו קבצי APK</string>
+    <string name="scanning">סורק קבצים במכשיר, אנא המתן...</string>
+    <string name="permission_title">נדרשת הרשאת גישה לקבצים</string>
+    <string name="permission_msg">כדי לחפש ולמיין קבצי APK במכשיר, האפליקציה זקוקה להרשאה לניהול קבצים.</string>
+    <string name="grant_permission">הענק הרשאה</string>
+    <string name="select_dest_folder">בחר תיקיית יעד</string>
+    <string name="select_this_folder">בחר תיקייה זו</string>
+    <string name="new_folder">תיקייה חדשה</string>
+    <string name="folder_name">שם התיקייה</string>
+    <string name="cancel">ביטול</string>
+    <string name="create">צור</string>
+    <string name="confirm_delete_title">אישור מחיקה</string>
+</resources>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#1E88E5</color>
+    <color name="primary_dark">#1565C0</color>
+    <color name="accent">#00897B</color>
+    <color name="background">#F4F6F9</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="badge_new_bg">#E8F5E9</color>
+    <color name="badge_new_text">#2E7D32</color>
+    <color name="badge_old_bg">#FFEBEE</color>
+    <color name="badge_old_text">#C62828</color>
+    <color name="danger">#D32F2F</color>
+    <color name="divider">#E0E0E0</color>
+</resources>
